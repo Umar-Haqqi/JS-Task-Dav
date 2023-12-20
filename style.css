@@ -1,0 +1,32 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container{
+    width: 90%;
+    height: auto;
+    margin: auto;
+    margin-top: 40px;
+    padding: 20px;
+    background: #f7f7f7;
+    position: relative;
+}
+.seacrh-div{
+    width: 100%;
+    margin: 30px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+.save-btn{
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: flex-end;
+}
+.open-search-modal-btn{
+    /* padding: 5px 20px; */
+}
+

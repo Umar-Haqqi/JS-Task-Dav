@@ -1,0 +1,64 @@
+[
+    {
+        "id": 9591,
+        "stockCode": "Qwerty_1",
+        "description": "description_1",
+        "uom": "uom_1",
+        "category": "SC",
+        "material": "EG421",
+        "coatingConst": "111.0000",
+        "group": "Cyrus Duke",
+        "quantity": {
+            "level1": 10,
+            "level2": 19,
+            "level3": 5,
+            "level4": 1
+
+        }
+    },
+    {
+        "id": 9592,
+        "stockCode": "Qwerty_2",
+        "description": "description_2",
+        "uom": "uom_2",
+        "category": "SC",
+        "material": "EG421",
+        "coatingConst": "111.0000",
+        "group": "Cyrus Duke",
+        "quantity": {
+            "level1": 2,    
+            "level2": 44,
+            "level3": 33
+        }
+    },
+    {
+        "id": 9593,
+        "stockCode": "Qwerty_3",
+        "description": "description_3",
+        "uom": "uom_3",
+        "category": "SC",
+        "material": "EG421",
+        "coatingConst": "111.0000",
+        "group": "Cyrus Duke",
+        "quantity": {
+            "level1": 1,
+            "level2": 40,
+            "level3": 44
+        }
+    },
+    {
+        "id": 9594,
+        "stockCode": "Qwerty_4",
+        "description": "description_4",
+        "uom": "uom_4",
+        "category": "SC",
+        "material": "EG421",
+        "coatingConst": "111.0000",
+        "group": "Cyrus Duke",
+        "quantity": {
+            "level1": 3,
+            "level2": 44,
+            "level3": 9
+        }
+    }
+]
