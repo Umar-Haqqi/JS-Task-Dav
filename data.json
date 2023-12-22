@@ -9,11 +9,9 @@
         "coatingConst": "111.0000",
         "group": "Cyrus Duke",
         "quantity": {
-            "level1": 10,
-            "level2": 19,
-            "level3": 5,
-            "level4": 1
-
+            "q1Level1": 10,
+            "q1Level2": 19,
+            "q1Level3": 5
         }
     },
     {
@@ -26,9 +24,8 @@
         "coatingConst": "111.0000",
         "group": "Cyrus Duke",
         "quantity": {
-            "level1": 2,    
-            "level2": 44,
-            "level3": 33
+            "q2Level1": 53,
+            "q2Level2": 22
         }
     },
     {
@@ -41,9 +38,11 @@
         "coatingConst": "111.0000",
         "group": "Cyrus Duke",
         "quantity": {
-            "level1": 1,
-            "level2": 40,
-            "level3": 44
+            "q3Level1": 1,
+            "q3Level2": 40,
+            "q3Level3": 44,
+            "q3Level4": 12,
+            "q3Level5": 88
         }
     },
     {
@@ -56,9 +55,8 @@
         "coatingConst": "111.0000",
         "group": "Cyrus Duke",
         "quantity": {
-            "level1": 3,
-            "level2": 44,
-            "level3": 9
+            "q4Level1": 3,
+            "q4Level3": 9
         }
     }
 ]

@@ -3,7 +3,7 @@ const selectAllCheckbox = document.querySelector('#select_all_checkboxes');
 const searchTableBody = document.querySelector('.table tbody');
 const ScreenTableBody = document.querySelector('#ScreenTableBody');
 const closeModalBtn = document.querySelector('#close_modal_btn');
-const tdSetQuantityTableBody = document.querySelector('#set_quantity_table_body');
+const SetQuantityTableBody = document.querySelector('#set_quantity_table_body');
 
 // global variables
 let invokeFunction = true;
@@ -19,13 +19,13 @@ const fetchData = async () => {
     return data;
 }
 
-function selectAll(checkbox) {
-    selectAllCheckbox.addEventListener('click', () => {
-        checkbox.checked = !checkbox.checked;
-        // renderCheckedDataInTable();
+// function selectAll(checkbox) {
+//     selectAllCheckbox.addEventListener('click', () => {
+//         checkbox.checked = !checkbox.checked;
+//         // renderCheckedDataInTable();
 
-    })
-}
+//     })
+// }
 
 const createSeachTableTbody = (data) => {
     const tr = document.createElement('tr');
@@ -62,17 +62,26 @@ const createSeachTableTbody = (data) => {
 
     searchTableBody.appendChild(tr);
 
-    // selectAll(checkbox);
 
-    checkbox.addEventListener('click', () => {
-        if (checkbox.checked) {
-            // checkbox.checked = false;
+    selectAllCheckbox.addEventListener('click', () => {
+        if (selectAllCheckbox.checked) {
+            checkbox.checked = true;
             modalCheckedDataArray.push(data);
             checkedRows.push(tr);
-            // tr.remove();
+        }
+        else {
+            checkbox.checked = false;
         }
     })
 
+    checkbox.addEventListener('click', () => {
+        if (checkbox.checked) {
+            modalCheckedDataArray.push(data);
+            checkedRows.push(tr);
+        }
+    })
+
+    // selectAll(checkbox);
 }
 
 
@@ -154,59 +163,57 @@ function createScreenTableBody(data) {
 
 
 function createtdSetQuantityModal(data) {
-    const tr = document.createElement('tr')
+    const tr = document.createElement('tr');
 
     const tdDropdown = document.createElement('td');
-    // const 
     const dropdownSelect = document.createElement('select');
 
-    fetchData().then(data => {
-        data.map((item) => {
-            const dropdownOption = document.createElement('option');
-            console.log("thiiiiiiiiiii", item.quantity);
-            dropdownOption.value = item.quantity;
-            for (let key in item.quantity) {
-                dropdownOption.textContent = item.quantity[key];
-            };
-            dropdownSelect.appendChild(dropdownOption);
-        })
-    })
-    tdDropdown.appendChild(dropdownSelect);
+    // Assuming "quantity" is always present in the data
+    const quantityKeys = Object.keys(data.quantity);
 
+    for (let key of quantityKeys) {
+        const dropdownOption = document.createElement('option');
+        dropdownOption.value = key;
+        dropdownOption.textContent = key;
+        dropdownSelect.appendChild(dropdownOption);
+    }
+
+    // Add an event listener to update the available quantity input
+    dropdownSelect.addEventListener('change', function () {
+        const selectedKey = this.value;
+        tdAvailableQuantityInput.value = data.quantity[selectedKey];
+    });
+
+    tdDropdown.appendChild(dropdownSelect);
+    tr.appendChild(tdDropdown);
 
     const tdAvailableQuantity = document.createElement('td');
     const tdAvailableQuantityInput = document.createElement('input');
     tdAvailableQuantityInput.type = 'text';
     tdAvailableQuantityInput.disabled = true;
-    tdAvailableQuantityInput.value = data.quantity.level1;
+    tdAvailableQuantity.appendChild(tdAvailableQuantityInput);
+    tr.appendChild(tdAvailableQuantity);
 
     const tdSetQuantity = document.createElement('td');
     const tdSetQuantityInput = document.createElement('input');
     tdSetQuantityInput.type = 'number';
     tdSetQuantityInput.value = "";
+    tdSetQuantity.appendChild(tdSetQuantityInput);
+    tr.appendChild(tdSetQuantity);
 
     const tdbuttons = document.createElement('td');
 
     const addNewRow = document.createElement('button');
     addNewRow.classList.add('btn', 'btn-sm', 'btn-success');
     addNewRow.textContent = '+';
-
-    const deleteRow = document.createElement('button');
-    deleteRow.classList.add('btn', 'btn-sm', 'btn-danger');
-    deleteRow.textContent = '-';
-
     tdbuttons.appendChild(addNewRow);
-    tdbuttons.appendChild(deleteRow);
 
-
-    tr.appendChild(tdDropdown);
-    tr.appendChild(tdAvailableQuantity);
-    tr.appendChild(tdSetQuantity);
     tr.appendChild(tdbuttons);
 
-
-    tdSetQuantityTableBody.appendChild(tr);
+    SetQuantityTableBody.appendChild(tr);
 }
+
+
 
 
 function renderCheckedDataInTable() {
