@@ -4,28 +4,24 @@ const searchTableBody = document.querySelector('.table tbody');
 const ScreenTableBody = document.querySelector('#ScreenTableBody');
 const closeModalBtn = document.querySelector('#close_modal_btn');
 const SetQuantityTableBody = document.querySelector('#set_quantity_table_body');
+const totQty = document.getElementById('tot_qty');
+const saveJsonButton = document.querySelector('#save_json_btn');
 
 // global variables
 let invokeFunction = true;
 
 const checkedRows = [];
-const deleteTableRow = []
+const deleteTableRow = [];
 const modalCheckedDataArray = [];
+const setQuantityInputs = [];
+
 
 const fetchData = async () => {
     const response = await fetch('./data.json');
     const data = await response.json();
-    // console.log(data);
     return data;
 }
 
-// function selectAll(checkbox) {
-//     selectAllCheckbox.addEventListener('click', () => {
-//         checkbox.checked = !checkbox.checked;
-//         // renderCheckedDataInTable();
-
-//     })
-// }
 
 const createSeachTableTbody = (data) => {
     const tr = document.createElement('tr');
@@ -80,8 +76,6 @@ const createSeachTableTbody = (data) => {
             checkedRows.push(tr);
         }
     })
-
-    // selectAll(checkbox);
 }
 
 
@@ -106,9 +100,9 @@ function createScreenTableBody(data) {
     const tdDescription = document.createElement('td');
     const tdUOM = document.createElement('td');
     const tdQuantity = document.createElement('td');
+    tdQuantity.id = 'Show_Total_quantity';
     const tdRemarks = document.createElement('td');
     const tdActions = document.createElement('td');
-
 
     tdStockCode.textContent = data.stockCode;
     tdDescription.textContent = data.description;
@@ -117,7 +111,9 @@ function createScreenTableBody(data) {
     const totalQuantity = document.createElement('input');
     totalQuantity.type = 'number';
     totalQuantity.disabled = true;
-    totalQuantity.value = "";
+    totalQuantity.id = 'quantityIssueInput';
+
+    tdQuantity.appendChild(totalQuantity);
 
     const remarksInput = document.createElement('input');
     remarksInput.type = 'text';
@@ -125,22 +121,23 @@ function createScreenTableBody(data) {
     tdRemarks.appendChild(remarksInput);
 
     const tdSetQuantityModalBtn = `
-        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#set_Qty_Modal_Btn">Set Quantity</button>
-    `
-
+        <button 
+        type="button" 
+        class="btn btn-sm btn-success" 
+        data-bs-toggle="modal" 
+        data-bs-target="#set_Qty_Modal_Btn"
+        >Set Quantity
+        </button>
+        `;
     createtdSetQuantityModal(data);
-
 
     const deleteRow = document.createElement('button');
     deleteRow.id = 'deleteTableRow';
     deleteRow.classList.add('btn', 'btn-sm', 'btn-danger');
     deleteRow.textContent = 'Delete';
 
-    // tdActions.appendChild(tdSetQuantityModalBtn);
-    tdQuantity.appendChild(totalQuantity);
     tdActions.innerHTML = tdSetQuantityModalBtn;
     tdActions.appendChild(deleteRow);
-
 
     tr.appendChild(tdStockCode);
     tr.appendChild(tdDescription);
@@ -151,14 +148,33 @@ function createScreenTableBody(data) {
 
     ScreenTableBody.appendChild(tr);
 
-
-    // deleting row from screen table
     deleteRow.addEventListener('click', () => {
         if (true) {
             deleteTableRow.push(tr);
             tr.remove();
         }
     })
+
+
+    // Assuming you already have the saveJsonButton defined
+    saveJsonButton.addEventListener('click', () => {
+        const tableRows = document.querySelectorAll('#ScreenTableBody tr');
+        const jsonDataArray = [];
+
+        tableRows.forEach((row) => {
+            const rowData = {
+                "Stock Code": row.querySelector('td:nth-child(1)').textContent,
+                "Description": row.querySelector('td:nth-child(2)').textContent,
+                "UOM": row.querySelector('td:nth-child(3)').textContent,
+                "Quantity Issue": totalQuantity.value,
+                "Remarks": remarksInput.value,
+            };
+            jsonDataArray.push(rowData);
+        });
+        console.log(JSON.stringify(jsonDataArray, null, 2));
+    });
+
+
 }
 
 
@@ -168,7 +184,6 @@ function createtdSetQuantityModal(data) {
     const tdDropdown = document.createElement('td');
     const dropdownSelect = document.createElement('select');
 
-    // Assuming "quantity" is always present in the data
     const quantityKeys = Object.keys(data.quantity);
 
     for (let key of quantityKeys) {
@@ -182,6 +197,7 @@ function createtdSetQuantityModal(data) {
     dropdownSelect.addEventListener('change', function () {
         const selectedKey = this.value;
         tdAvailableQuantityInput.value = data.quantity[selectedKey];
+        tdSetQuantityInput.value = "";
     });
 
     tdDropdown.appendChild(dropdownSelect);
@@ -189,7 +205,7 @@ function createtdSetQuantityModal(data) {
 
     const tdAvailableQuantity = document.createElement('td');
     const tdAvailableQuantityInput = document.createElement('input');
-    tdAvailableQuantityInput.type = 'text';
+    tdAvailableQuantityInput.type = 'number';
     tdAvailableQuantityInput.disabled = true;
     tdAvailableQuantity.appendChild(tdAvailableQuantityInput);
     tr.appendChild(tdAvailableQuantity);
@@ -198,28 +214,90 @@ function createtdSetQuantityModal(data) {
     const tdSetQuantityInput = document.createElement('input');
     tdSetQuantityInput.type = 'number';
     tdSetQuantityInput.value = "";
+    tdSetQuantityInput.addEventListener('input', updateTotalQuantity);
     tdSetQuantity.appendChild(tdSetQuantityInput);
     tr.appendChild(tdSetQuantity);
+
+    setQuantityInputs.push(tdSetQuantityInput);
+
+    // Add event listener to validate set quantity
+    tdSetQuantityInput.addEventListener('input', function () {
+        const setQuantityValue = parseFloat(this.value);
+        const availableQuantityValue = parseFloat(tdAvailableQuantityInput.value);
+
+        if (isNaN(setQuantityValue) || setQuantityValue > availableQuantityValue) {
+            this.value = "";
+        }
+    });
+
+    // Prevent scrolling beyond available quantity
+    tdSetQuantityInput.addEventListener('wheel', function (event) {
+        const setQuantityValue = parseFloat(this.value);
+        const availableQuantityValue = parseFloat(tdAvailableQuantityInput.value);
+
+        if (event.deltaY > 0 && setQuantityValue >= availableQuantityValue) {
+            // Scrolling down and set quantity is already at or above available quantity
+            event.preventDefault();
+        } else if (event.deltaY < 0 && setQuantityValue === availableQuantityValue) {
+            // Scrolling up and set quantity is at available quantity
+            event.preventDefault();
+        }
+    });
+
+    // Prevent incrementing beyond available quantity using up arrow key
+    tdSetQuantityInput.addEventListener('keydown', function (event) {
+        const setQuantityValue = parseFloat(this.value);
+        const availableQuantityValue = parseFloat(tdAvailableQuantityInput.value);
+
+        if (event.key === 'ArrowUp' && setQuantityValue >= availableQuantityValue) {
+            // Up arrow key pressed and set quantity is already at or above available quantity
+            event.preventDefault();
+        }
+    });
 
     const tdbuttons = document.createElement('td');
 
     const addNewRow = document.createElement('button');
-    addNewRow.classList.add('btn', 'btn-sm', 'btn-success');
+    addNewRow.classList.add('btn', 'btn-sm', 'btn-success', 'mx-1');
     addNewRow.textContent = '+';
     tdbuttons.appendChild(addNewRow);
+
+    const removeRow = document.createElement('button');
+    removeRow.classList.add('btn', 'btn-sm', 'btn-danger');
+    removeRow.textContent = '-';
+    tdbuttons.appendChild(removeRow);
+
+    addNewRow.addEventListener('click', () => {
+        createtdSetQuantityModal(data);
+    })
+
+    removeRow.addEventListener('click', () => {
+        tr.remove();
+    })
 
     tr.appendChild(tdbuttons);
 
     SetQuantityTableBody.appendChild(tr);
 }
 
+function updateTotalQuantity() {
+    // Calculate the sum of all tdSetQuantityInput values
+    const totalQuantity = setQuantityInputs.reduce((sum, input) => {
+        const value = parseFloat(input.value) || 0;
+        return sum + value;
+    }, 0);
 
+    totQty.innerHTML = `Total Quantity: ${totalQuantity}`;
+
+    const quantityIssueInput = document.getElementById('quantityIssueInput');
+    quantityIssueInput.value = totalQuantity;
+}
 
 
 function renderCheckedDataInTable() {
     invokeFunction = false;
 
-    console.log("modalCheckedDataArray", modalCheckedDataArray);
+    // console.log("modalCheckedDataArray", modalCheckedDataArray);
     modalCheckedDataArray.map((item) => {
         createScreenTableBody(item);
     })
@@ -238,7 +316,6 @@ closeModalBtn.addEventListener('click', () => {
         });
     });
 
-    // Remove rows from the screen table by delete button
     checkedRows.forEach(row => {
         row.remove();
     });

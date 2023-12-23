@@ -22,13 +22,7 @@
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <!-- <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div> -->
                     <div class="modal-body">
-
-
                         <table class="table">
                             <thead>
                                 <tr>
@@ -46,8 +40,6 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-
-
                     </div>
                     <div class="modal-footer">
                         <button id="close_modal_btn" type="button" class="btn btn-sm btn-success"
@@ -83,19 +75,19 @@
                     <div class="modal-content">
                         <div class="modal-body">
                             <table id="set_quantity_table" class="table">
-                                <div id="display_total_quantity" style="display: flex; justify-content: space-between;">
-                                    <p id="current_selected">Curent</p>
-                                    <p id="tot_qty">total QTY</p>
+                                <div id="display_total_quantity" style="display: flex; justify-content: flex-end;">
+                                    <!-- <p id="current_selected">Current Item</p> -->
+                                    <p id="tot_qty">Total QTY: 0</p>
                                 </div>
                                 <thead>
                                     <tr>
                                         <th>Select</th>
                                         <th>Available Quantity</th>
                                         <th>Quantity</th>
-                                        <th></th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
-                                
+
                                 <tbody id="set_quantity_table_body"></tbody>
 
                             </table>
